@@ -1,0 +1,4 @@
+name: Redbug
+version: '1.0-SNAPSHOT'
+main: mc.mrd_og.redbug.Redbug
+api-version: '1.21'
