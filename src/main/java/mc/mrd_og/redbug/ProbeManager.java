@@ -102,6 +102,12 @@ public class ProbeManager {
         }
         Path path = Path.of(filename).toAbsolutePath();
         vcdWriter = new VcdWriter(path, allScopes, busConfigs);
+
+        // Write helper scripts next to the VCD file
+        String baseName = filename.replace(".vcd", "");
+        writeTclScript(path.resolveSibling(baseName + "_reload.tcl"));
+        writeLaunchScript(path.resolveSibling(baseName + "_live.sh"), filename, baseName + "_reload.tcl");
+
         return path;
     }
 
@@ -114,6 +120,41 @@ public class ProbeManager {
 
     public boolean isRecordingVcd() {
         return vcdWriter != null && !vcdWriter.isClosed();
+    }
+
+    private void writeTclScript(Path tclPath) throws IOException {
+        try (var tw = new java.io.FileWriter(tclPath.toFile())) {
+            tw.write("proc reload_live {} {\n");
+            tw.write("    gtkwave::reLoadFile\n");
+            tw.write("    after 1500 reload_live\n");
+            tw.write("}\n");
+            tw.write("after 1500 reload_live\n");
+        }
+    }
+
+    private void writeLaunchScript(Path scriptPath, String vcdFile, String tclFile) throws IOException {
+        try (var sw = new java.io.FileWriter(scriptPath.toFile())) {
+            sw.write("#!/bin/bash\n");
+            sw.write("# Redbug GTKWave live viewer\n");
+            sw.write("# Usage: ./redbug_live.sh [--shm]\n");
+            sw.write("#   --shm  Force shmidcat mode (native Linux only, breaks on WSL)\n\n");
+            sw.write("DIR=\"$(cd \"$(dirname \"$0\")\" && pwd)\"\n");
+            sw.write("VCD=\"$DIR/" + vcdFile + "\"\n");
+            sw.write("TCL=\"$DIR/" + tclFile + "\"\n\n");
+            sw.write("if [ \"$1\" = \"--shm\" ]; then\n");
+            sw.write("    if ! command -v shmidcat &>/dev/null; then\n");
+            sw.write("        echo \"[Redbug] shmidcat not found. Install gtkwave package.\"\n");
+            sw.write("        exit 1\n");
+            sw.write("    fi\n");
+            sw.write("    echo \"[Redbug] Using shmidcat live mode...\"\n");
+            sw.write("    tail -c +0 -f \"$VCD\" | shmidcat | gtkwave -v -I\n");
+            sw.write("else\n");
+            sw.write("    echo \"[Redbug] Opening GTKWave with auto-reload (every 1.5s)...\"\n");
+            sw.write("    echo \"[Redbug] Tip: on native Linux, try --shm for true live streaming.\"\n");
+            sw.write("    gtkwave \"$VCD\" -S \"$TCL\"\n");
+            sw.write("fi\n");
+        }
+        scriptPath.toFile().setExecutable(true);
     }
 
     private Map<Integer, List<Probe>> collectAllScopeProbes() {

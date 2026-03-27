@@ -138,11 +138,13 @@ public class RedbugCommand implements BasicCommand {
                 if (!filename.endsWith(".vcd")) filename += ".vcd";
                 try {
                     Path path = probeManager.startVcd(filename);
+                    String baseName = filename.replace(".vcd", "");
                     player.sendMessage(Component.text("\u26a1 VCD recording ", NamedTextColor.GREEN)
                             .append(Component.text("STARTED", NamedTextColor.AQUA)));
                     player.sendMessage(Component.text("  File: " + path, NamedTextColor.GRAY));
-                    player.sendMessage(Component.text("  Open in GTKWave: ", NamedTextColor.GRAY)
-                            .append(Component.text("gtkwave " + filename, NamedTextColor.WHITE)));
+                    player.sendMessage(Component.text("  Live view: ", NamedTextColor.GRAY)
+                            .append(Component.text("./" + baseName + "_live.sh", NamedTextColor.WHITE)));
+                    player.sendMessage(Component.text("  (uses shmidcat on Linux/WSL, Tcl reload on macOS)", NamedTextColor.DARK_GRAY));
                 } catch (IOException e) {
                     player.sendMessage(Component.text("Failed to start VCD: " + e.getMessage(), NamedTextColor.RED));
                 }
