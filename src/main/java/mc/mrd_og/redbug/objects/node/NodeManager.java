@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
@@ -241,16 +240,8 @@ public class NodeManager {
                 return;
             }
 
-            BlockData data = leverBlock.getBlockData();
-            if (data instanceof Switch sw) {
-                sw.setPowered(false);
-                leverBlock.setBlockData(sw, true);
-                Block attached = getAttachedBlock(leverBlock);
-                updateAllNeighbors(leverBlock);
-                if (attached != null) {
-                    attached.getState().update(true, true);
-                    updateAllNeighbors(attached);
-                }
+            if (leverBlock.getBlockData() instanceof Switch sw) {
+                setLeverPowered(leverBlock, sw, false);
             }
         }
 
@@ -278,38 +269,32 @@ public class NodeManager {
             }
         }
 
-        // All levers present
         for (int i = 0; i < locations.size(); i++) {
             Block block = locations.get(i).getBlock();
-
             Switch lever = (Switch) block.getBlockData();
+            boolean powered = toggle ? !lever.isPowered() : value.charAt(i) == '1';
 
-            if (!toggle) {
-                // Set value
-                lever.setPowered(value.charAt(i) == '1');
-                block.setBlockData(lever, value.charAt(i) == '1');
-                block.getState().update(true, true);
-                Block attached = getAttachedBlock(block);
-                updateAllNeighbors(block);
-                if (attached != null) {
-                    attached.getState().update(true, true);
-                    updateAllNeighbors(attached);
-                }
+            setLeverPowered(block, lever, powered);
 
-                // Schedule 0s
-                if (duration > -1) {
-                    new TickTask(duration, block, plugin).runTask(plugin);
-                }
-
-            } else {
-                // Invert all bits
-                lever.setPowered(!lever.isPowered());
-                block.setBlockData(lever, true);
-                block.getState().update(true, true);
+            if (!toggle && duration > -1) {
+                new TickTask(duration, block, plugin).runTask(plugin);
             }
         }
 
         return true;
+    }
+
+    private static void setLeverPowered(Block leverBlock, Switch lever, boolean powered) {
+        lever.setPowered(powered);
+        leverBlock.setBlockData(lever, true);
+        leverBlock.getState().update(true, true);
+
+        Block attached = getAttachedBlock(leverBlock);
+        updateAllNeighbors(leverBlock);
+        if (attached != null) {
+            attached.getState().update(true, true);
+            updateAllNeighbors(attached);
+        }
     }
     public static void updateAllNeighbors(Block block) {
         for (BlockFace face : BlockFace.values()) {
