@@ -5,11 +5,14 @@ import mc.mrd_og.redbug.util.ColourHelper;
 import mc.mrd_og.redbug.objects.node.visual.NodeHighlight;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Switch;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -286,22 +289,23 @@ public class NodeManager {
 
     private static void setLeverPowered(Block leverBlock, Switch lever, boolean powered) {
         lever.setPowered(powered);
+        // applyPhysics=true triggers vanilla neighborChanged on the lever's 6 cardinals
+        // (covering the lever itself, adjacent repeaters/dust, and the attached block).
         leverBlock.setBlockData(lever, true);
-        leverBlock.getState().update(true, true);
 
+        // The attached block may not change state (e.g. a stone block carrying strong power),
+        // so vanilla doesn't propagate past it. Manually fire updateNeighborsAt on it so its
+        // own 6 cardinals (e.g. dust on the far side) recompute.
         Block attached = getAttachedBlock(leverBlock);
-        updateAllNeighbors(leverBlock);
         if (attached != null) {
-            attached.getState().update(true, true);
-            updateAllNeighbors(attached);
+            updateNeighborsAt(attached);
         }
     }
-    public static void updateAllNeighbors(Block block) {
-        for (BlockFace face : BlockFace.values()) {
-            // todo: beware of perf issues
-            Block neighbor = block.getRelative(face);
-            neighbor.getState().update(true, true);
-        }
+
+    private static void updateNeighborsAt(Block block) {
+        CraftBlock craftBlock = (CraftBlock) block;
+        ServerLevel level = ((CraftWorld) block.getWorld()).getHandle();
+        level.updateNeighborsAt(craftBlock.getPosition(), craftBlock.getNMS().getBlock());
     }
     public static Block getAttachedBlock(Block leverBlock) {
         if (leverBlock.getType() != Material.LEVER) return null;
