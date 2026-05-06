@@ -1,7 +1,8 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import mc.mrd_og.redbug.objects.monitor.MonitorManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,12 +12,12 @@ import java.util.concurrent.Executors;
 
 public class WebServer {
 
-    private final ProbeManager probeManager;
+    private final MonitorManager monitorManager;
     private final int port;
     private HttpServer server;
 
-    public WebServer(ProbeManager probeManager, int port) {
-        this.probeManager = probeManager;
+    public WebServer(MonitorManager nodeManager, int port) {
+        this.monitorManager = nodeManager;
         this.port = port;
     }
 
@@ -59,7 +60,7 @@ public class WebServer {
         OutputStream os = exchange.getResponseBody();
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                String json = probeManager.getLatestJson();
+                String json = "";//monitorManager.getLatestJson();
                 os.write(("data: " + json + "\n\n").getBytes(StandardCharsets.UTF_8));
                 os.flush();
                 Thread.sleep(200);

@@ -1,7 +1,7 @@
 name: Redbug
 version: '1.0'
-main: mc.mrd_og.redbug.Redbug
+main: mc.mrd_og.redbug.plugin.Redbug
 description: Debug Oscilloscope for Redstone
 api-version: '1.21.8'
-bootstrapper: mc.mrd_og.redbug.Bootstrapper
-loader: mc.mrd_og.redbug.RedbugPluginLoader
+bootstrapper: mc.mrd_og.redbug.deprecated.Bootstrapper
+loader: mc.mrd_og.redbug.plugin.RedbugPluginLoader

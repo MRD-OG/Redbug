@@ -1,4 +1,4 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
 import org.bukkit.Location;
 import org.bukkit.block.data.AnaloguePowerable;
@@ -59,6 +59,7 @@ public class Probe {
                 && location.getBlockZ() == loc.getBlockZ()
                 && location.getWorld().equals(loc.getWorld());
     }
+
 
     public String coordString() {
         return "(" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + ")";

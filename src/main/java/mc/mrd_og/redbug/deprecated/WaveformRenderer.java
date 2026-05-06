@@ -1,5 +1,6 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
+import mc.mrd_og.redbug.deprecated.Probe;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 

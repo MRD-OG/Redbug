@@ -1,5 +1,5 @@
 name: Redbug
 version: '1.0-SNAPSHOT'
-main: mc.mrd_og.redbug.Redbug
+main: mc.mrd_og.redbug.plugin.Redbug
 api-version: '1.21'
 description: Debug Oscilloscope for Redstone

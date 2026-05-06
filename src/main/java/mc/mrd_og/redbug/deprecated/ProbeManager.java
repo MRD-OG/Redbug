@@ -1,5 +1,6 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
+import mc.mrd_og.redbug.plugin.Redbug;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

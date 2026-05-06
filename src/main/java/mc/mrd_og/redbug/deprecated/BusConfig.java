@@ -1,4 +1,4 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
 import java.util.*;
 

@@ -1,4 +1,7 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
+
+import mc.mrd_og.redbug.deprecated.BusConfig;
+import mc.mrd_og.redbug.deprecated.Probe;
 
 import java.io.*;
 import java.nio.file.Path;

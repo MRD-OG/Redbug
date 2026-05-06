@@ -1,4 +1,4 @@
-package mc.mrd_og.redbug;
+package mc.mrd_og.redbug.deprecated;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -200,7 +200,7 @@ public class RedbugCommand implements BasicCommand {
         BusConfig config = probeManager.getOrCreateBusConfig(scope);
         config.setSort(strategy);
 
-        player.sendMessage(Component.text("\u26a1 Scope " + scope + " bus sort: ", NamedTextColor.GREEN)
+        player.sendMessage(Component.text("\u26a1 Monitor " + scope + " bus sort: ", NamedTextColor.GREEN)
                 .append(Component.text(strategy.getId(), NamedTextColor.AQUA))
                 .append(Component.text(" (" + strategy.getDescription() + ")", NamedTextColor.GRAY)));
     }
@@ -234,7 +234,7 @@ public class RedbugCommand implements BasicCommand {
             msg += " (word size: " + config.getWordSize() + " bits)";
         }
 
-        player.sendMessage(Component.text("\u26a1 Scope " + scope + " bus format: ", NamedTextColor.GREEN)
+        player.sendMessage(Component.text("\u26a1 Monitor " + scope + " bus format: ", NamedTextColor.GREEN)
                 .append(Component.text(msg, NamedTextColor.AQUA)));
     }
 
@@ -245,7 +245,7 @@ public class RedbugCommand implements BasicCommand {
             return;
         }
 
-        player.sendMessage(Component.text("\u2550\u2550\u2550 Bus Config: Scope " + scope + " \u2550\u2550\u2550", NamedTextColor.GOLD));
+        player.sendMessage(Component.text("\u2550\u2550\u2550 Bus Config: Monitor " + scope + " \u2550\u2550\u2550", NamedTextColor.GOLD));
         player.sendMessage(Component.text("  Sort: ", NamedTextColor.GRAY)
                 .append(Component.text(config.getSort().getId() + " - " + config.getSort().getDescription(), NamedTextColor.WHITE)));
         player.sendMessage(Component.text("  Format: ", NamedTextColor.GRAY)
@@ -289,7 +289,7 @@ public class RedbugCommand implements BasicCommand {
 
         for (Map.Entry<Integer, List<Probe>> entry : grouped.entrySet()) {
             int scope = entry.getKey();
-            player.sendMessage(Component.text("\u2550\u2550\u2550 Scope " + scope + " \u2550\u2550\u2550", NamedTextColor.GOLD));
+            player.sendMessage(Component.text("\u2550\u2550\u2550 Monitor " + scope + " \u2550\u2550\u2550", NamedTextColor.GOLD));
             for (int i = 0; i < entry.getValue().size(); i++) {
                 player.sendMessage(WaveformRenderer.renderCompactWaveform(entry.getValue().get(i), i));
             }
@@ -320,7 +320,7 @@ public class RedbugCommand implements BasicCommand {
             int scope = entry.getKey();
             BusConfig bus = probeManager.getBusConfig(scope);
             String busLabel = bus != null ? " [bus: " + bus.getSort().getId() + " " + bus.getFormat().getId() + "]" : "";
-            player.sendMessage(Component.text("  Scope " + scope + busLabel + ":", NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("  Monitor " + scope + busLabel + ":", NamedTextColor.YELLOW));
             for (int i = 0; i < entry.getValue().size(); i++) {
                 Probe probe = entry.getValue().get(i);
                 player.sendMessage(Component.text("    P" + (i + 1) + " " + probe.coordString(), WaveformRenderer.colorFor(i))
@@ -334,7 +334,7 @@ public class RedbugCommand implements BasicCommand {
             try {
                 int scope = Integer.parseInt(args[1]);
                 probeManager.clearScope(player.getUniqueId(), scope);
-                player.sendMessage(Component.text("\u26a1 Scope " + scope + " cleared.", NamedTextColor.YELLOW));
+                player.sendMessage(Component.text("\u26a1 Monitor " + scope + " cleared.", NamedTextColor.YELLOW));
                 return;
             } catch (NumberFormatException e) {
                 player.sendMessage(Component.text("Invalid scope number.", NamedTextColor.RED));
