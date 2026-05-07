@@ -1,0 +1,51 @@
+
+
+
+/pin add <name> <size default=1>? <colour>?
+/pin remove <name>
+/pin toggle <name>
+/pin set <name> <value>
+/pin pulse <name> <value> <duration in ticks>
+/pin clear
+/pin list <name>?
+
+/wire add <name> <size> <colour>?
+/wire remove <name>
+/wire clear
+/wire list <name>?
+
+/monitor create <name>
+/monitor delete <name>
+/monitor clear
+/monitor add <name> <node_name>
+/monitor remove <name> <node_name>.
+/monitor list <name>?
+
+/test load <name> <test_path.csv>
+/test remove <name>
+/test clear
+/test run <name> <monitor_name> <clk_pin_name> <clock_period in ticks> <clock_max_propagation_delay> <output_dump_dir>
+/test stop <name>
+/test list
+/test info <name>
+
+
+example:
+
+/pin add clk
+/pin add input_a 8
+/pin add input_b 8
+/bus add result 8
+
+/monitor create result_monitor
+/monitor add result_monitor clk
+/monitor add result_monitor result
+
+/monitor create input_monitor
+/monitor add input_monitor input_a
+/monitor add input_monitor input_b
+
+/test load tests/example.csv test1
+
+/test run test1 input_monitor clk 10 test_dump_dir
+/test run test1 result_monitor clk 10 test_dump_dir
